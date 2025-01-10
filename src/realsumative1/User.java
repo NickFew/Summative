@@ -11,6 +11,7 @@ package realsumative1;
 import java.util.ArrayList;
 import java.util.List;
 
+// User class
 public class User {
     private String username;
     private String password;
