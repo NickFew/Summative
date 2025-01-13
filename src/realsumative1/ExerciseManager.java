@@ -24,4 +24,5 @@ public class ExerciseManager {
         // In a real app, filter exercises based on the need
         return exercises;
     }
+
 }

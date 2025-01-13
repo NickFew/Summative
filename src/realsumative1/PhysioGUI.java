@@ -94,9 +94,11 @@ public class PhysioGUI {
                 Exercise selectedExercise = exerciseList.getSelectedValue();
                 if (selectedExercise != null) {
                     JOptionPane.showMessageDialog(frame, selectedExercise.getDescription());
+
                 }
             }
         });
+
 
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(selectButton, BorderLayout.SOUTH);
