@@ -4,69 +4,50 @@
  */
 package realsumative1;
 
-/**
- *
- * @author nwf60
- */
-import com.sun.javafx.scene.web.Debugger;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginManager {
-    private ArrayList<User> users = new ArrayList<>();
+    private Map<String, String> userMap = new HashMap<>();
+    private String userFile = "resources/users";
 
     public LoginManager() {
-        readUsers();
-//        users.add(new User("test", "password")); // Example user
+        loadUsers();
     }
 
     public boolean login(String username, String password) {
-        for (User user : users) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                return true;
-            }
-        }
-        return false;
+        return userMap.containsKey(username) && userMap.get(username).equals(password);
     }
 
     public boolean createAccount(String username, String password) {
-        if (users.isEmpty()) {
-            addUserText(username,password);
-            return true;
+        if (userMap.containsKey(username)) {
+            return false; // Username already exists
         }
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return false; // Username already exists
-            }
-        }
-
-        users.add(new User(username, password));
-        addUserText(username,password);
+        userMap.put(username, password);
+        saveUser(username, password);
         return true;
     }
-    // Help from Elliott
-    public void addUserText(String username, String password) {
-        // username,password
-        try (PrintWriter pw = new PrintWriter(new FileWriter("resources/users",true))) {
-            String combined = username + "," + password;
-            pw.println(combined);
-        } catch(IOException e) {
+
+    private void saveUser(String username, String password) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(userFile, true))) {
+            pw.println(username + "," + password);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Help from Elliott
-    public void readUsers() {
-        try(BufferedReader br = new BufferedReader(new FileReader("resources/users"))) {
+    private void loadUsers() {
+        try (BufferedReader br = new BufferedReader(new FileReader(userFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                User user = new User(parts[0],parts[1]);
-                users.add(user);
+                if (parts.length == 2) {
+                    userMap.put(parts[0], parts[1]);
+                }
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

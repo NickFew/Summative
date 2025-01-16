@@ -26,7 +26,7 @@ public class PhysioGUI {
         progressManager = new ProgressManager("progress.txt");
         frame = new JFrame("Physio App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(600, 400);
         showLoginScreen();
     }
 
@@ -83,23 +83,55 @@ public class PhysioGUI {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JList<Exercise> exerciseList = new JList<>(exerciseManager.getExercises("need").toArray(new Exercise[0]));
+        // Create search bar components
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        JTextField searchField = new JTextField();
+        JButton searchButton = new JButton("Search");
+
+        searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+        // Create the exercise list with a scroll bar
+        DefaultListModel<Exercise> listModel = new DefaultListModel<>();
+        for (Exercise exercise : exerciseManager.getExercises("need")) {
+            listModel.addElement(exercise);
+        }
+        JList<Exercise> exerciseList = new JList<>(listModel);
         exerciseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(exerciseList);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        JButton selectButton = new JButton("Select");
-        selectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Exercise selectedExercise = exerciseList.getSelectedValue();
-                if (selectedExercise != null) {
-                    JOptionPane.showMessageDialog(frame, selectedExercise.getDescription());
+        // Search functionality
+        searchButton.addActionListener(e -> {
+            String query = searchField.getText().toLowerCase(); // Case-insensitive search
+            listModel.clear();
 
+            for (Exercise exercise : exerciseManager.getExercises("need")) {
+                if (exercise.getName().toLowerCase().contains(query) ||
+                        exercise.getDescription().toLowerCase().contains(query)) {
+                    listModel.addElement(exercise); // Add matching exercises to the list
                 }
+            }
+
+            if (listModel.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "No matches found.", "Search", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
+        // Select button for showing exercise details
+        JButton selectButton = new JButton("Select");
+        selectButton.addActionListener(e -> {
+            Exercise selectedExercise = exerciseList.getSelectedValue();
+            if (selectedExercise != null) {
+                JOptionPane.showMessageDialog(frame, selectedExercise.getDescription());
+            } else {
+                JOptionPane.showMessageDialog(frame, "Please select an exercise.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
+        // Add components to the panel
+        panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(selectButton, BorderLayout.SOUTH);
 
