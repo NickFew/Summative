@@ -118,8 +118,17 @@ public class PhysioGUI {
                 JOptionPane.showMessageDialog(frame, "No matches found.", "Search", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+        JButton Progress = new JButton("Progress");
 
-        // Select button for showing exercise details
+        Progress.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ShowProgressScreen();
+            }
+        });
+
+        // Select button for showing exercise details and selecting the progress tab
         JButton selectButton = new JButton("Select");
         selectButton.addActionListener(e -> {
             Exercise selectedExercise = exerciseList.getSelectedValue();
@@ -134,8 +143,14 @@ public class PhysioGUI {
         panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(selectButton, BorderLayout.SOUTH);
-
+        panel.add(Progress,BorderLayout.WEST);
         frame.setContentPane(panel);
         frame.setVisible(true);
+    }
+    public void ShowProgressScreen(){
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new BorderLayout());
+        frame.setVisible(true);
+
     }
 }

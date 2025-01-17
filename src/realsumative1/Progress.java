@@ -4,6 +4,8 @@
  */
 package realsumative1;
 
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author nwf60
@@ -21,6 +23,9 @@ public class Progress {
 
     public Progress() {
         this(0,null,0);
+    }
+
+    public static void addActionListener(ActionListener actionListener) {
     }
 
     public int getPainLevel() {
