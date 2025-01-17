@@ -95,7 +95,7 @@ public class PhysioGUI {
         // Create the exercise list with a scroll bar
         DefaultListModel<Exercise> listModel = new DefaultListModel<>();
         for (Exercise exercise : exerciseManager.getExercises("need")) {
-            listModel.addElement(exercise);
+            listModel.addElement(exercise); // Automatically sorted exercises
         }
         JList<Exercise> exerciseList = new JList<>(listModel);
         exerciseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
