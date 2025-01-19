@@ -23,7 +23,7 @@ public class PhysioGUI {
     public PhysioGUI() {
         loginManager = new LoginManager();
         exerciseManager = new ExerciseManager();
-        progressManager = new ProgressManager("progress.txt");
+        progressManager = new ProgressManager();
         frame = new JFrame("Physio App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
@@ -78,7 +78,6 @@ public class PhysioGUI {
         frame.setContentPane(panel);
         frame.setVisible(true);
     }
-
     public void showExerciseScreen() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -102,26 +101,19 @@ public class PhysioGUI {
         JScrollPane scrollPane = new JScrollPane(exerciseList);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        // Search functionality
-        searchButton.addActionListener(e -> {
-            String query = searchField.getText().toLowerCase(); // Case-insensitive search
-            listModel.clear();
-
-            for (Exercise exercise : exerciseManager.getExercises("need")) {
-                if (exercise.getName().toLowerCase().contains(query) ||
-                        exercise.getDescription().toLowerCase().contains(query)) {
-                    listModel.addElement(exercise); // Add matching exercises to the list
-                }
-            }
-
-            if (listModel.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "No matches found.", "Search", JOptionPane.INFORMATION_MESSAGE);
+        // Create the Sign Out button
+        JButton signOutButton = new JButton("Sign Out");
+        signOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showLoginScreen(); //back to the login screen
             }
         });
+
+        // Create Progress Button
         JButton Progress = new JButton("Progress");
 
-        Progress.addActionListener(new ActionListener(){
-
+        Progress.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 ShowProgressScreen();
@@ -143,14 +135,130 @@ public class PhysioGUI {
         panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(selectButton, BorderLayout.SOUTH);
-        panel.add(Progress,BorderLayout.WEST);
+        panel.add(Progress, BorderLayout.WEST);
+        panel.add(signOutButton, BorderLayout.EAST); // Add Sign Out button at the East side
+
         frame.setContentPane(panel);
         frame.setVisible(true);
     }
-    public void ShowProgressScreen(){
-        JPanel panel2 = new JPanel();
-        panel2.setLayout(new BorderLayout());
-        frame.setVisible(true);
+    public void ShowProgressScreen() {
+        // Create the panel for progress screen
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(5, 2, 10, 10));
 
+        // Add labels and input fields
+        JLabel painLevelLabel = new JLabel("Pain Level (1-10):");
+        JTextField painLevelField = new JTextField();
+        JLabel difficultyLabel = new JLabel("Difficulty (1-10):");
+        JTextField difficultyField = new JTextField();
+        JLabel areaLabel = new JLabel("Area of Pain:");
+        JTextField areaField = new JTextField();
+
+        JButton submitButton = new JButton("Submit");
+        JButton backButton = new JButton("Back");
+
+        // Add components to the panel
+        panel.add(painLevelLabel);
+        panel.add(painLevelField);
+        panel.add(difficultyLabel);
+        panel.add(difficultyField);
+        panel.add(areaLabel);
+        panel.add(areaField);
+        panel.add(submitButton);
+        panel.add(backButton);
+
+        // Add functionality to the Submit button
+        submitButton.addActionListener(e -> {
+            String painLevelText = painLevelField.getText();
+            String difficultyText = difficultyField.getText();
+            String area = areaField.getText();
+
+            try {
+                int painLevel = Integer.parseInt(painLevelText);
+                int difficulty = Integer.parseInt(difficultyText);
+
+                // Validate input
+                if (painLevel < 1 || painLevel > 10) {
+                    JOptionPane.showMessageDialog(frame, "Pain Level must be between 1 and 10.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (difficulty < 1 || difficulty > 10) {
+                    JOptionPane.showMessageDialog(frame, "Difficulty must be between 1 and 10.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (area.isEmpty() || !area.matches("[a-zA-Z\\s]+")) {
+                    JOptionPane.showMessageDialog(frame, "Area of Pain must be a valid string (letters and spaces only).", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Create a Progress object
+                Progress progress = new Progress(painLevel, area, difficulty);
+
+                // Save the progress using ProgressManager
+                progressManager.saveProgress(progress);
+
+                // Inform the user that the progress was saved
+                JOptionPane.showMessageDialog(frame, "Progress Saved!\n" +
+                        "Pain Level: " + painLevel + "\n" +
+                        "Difficulty: " + difficulty + "\n" +
+                        "Area of Pain: " + area, "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                // Clear fields after saving
+                painLevelField.setText("");
+                difficultyField.setText("");
+                areaField.setText("");
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Pain Level and Difficulty must be valid numbers.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        JButton viewFileButton = new JButton("View Progress File");
+        viewFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayFile();
+            }
+        });
+
+        panel.add(viewFileButton);
+        frame.add(panel);
+
+        // Add functionality to the Back button
+        backButton.addActionListener(e -> showExerciseScreen());
+
+        // Set the panel as the content pane and make it visible
+        frame.setContentPane(panel);
+        frame.setVisible(true);
+    }
+    public void displayFile() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JTextArea textArea = new JTextArea();
+        textArea.setEditable(false); // Make the text area read-only
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        // Retrieve and display the file content
+        String fileContent = progressManager.readFile();
+        if (fileContent == null || fileContent.isEmpty()) {
+            fileContent = "No progress data available.";
+        }
+        textArea.setText(fileContent);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Create the Back button
+        JButton backButton = new JButton("Back to Exercise Screen");
+        backButton.addActionListener(e -> showExerciseScreen());
+
+        // Add the Back button at the bottom of the panel
+        panel.add(backButton, BorderLayout.SOUTH);
+
+        // Set the panel as the content pane and make it visible
+        frame.setContentPane(panel);
+        frame.revalidate(); // Refresh the frame to show the new panel
+        frame.repaint();
     }
 }

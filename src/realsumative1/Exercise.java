@@ -32,7 +32,7 @@ public class Exercise {
     }
     public String toString(){
         return getName();
-    }// used solve problem of it not displaying the name but instead the to array
+    }
 
 }
 

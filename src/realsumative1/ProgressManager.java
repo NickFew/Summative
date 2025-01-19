@@ -8,44 +8,56 @@ package realsumative1;
  *
  * @author nwf60
  */
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ProgressManager {
-    private String file;
 
-    public ProgressManager(String file) {
-        this.file = file;
+    private String filename;
+
+    public ProgressManager() {
+        filename = "resources/Progress";
     }
 
-    public void saveProgress(User user) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-            for (Progress progress : user.getProgress()) {
-                writer.write(user.getUsername() + "," + progress.getPainLevel() + "," + progress.getArea() + "," + progress.getDifficulty());
-                writer.newLine();
-            }
+    public void saveProgress(Progress progress) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
+            writer.write("Pain level:" + progress.getPainLevel() + ", Difficulty" + progress.getDifficulty() + ", Area of pain:" + progress.getArea());
+            writer.newLine(); // Move to the next line
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    public List<String> seeSavedProgress() {
+        List<String> progressList = new ArrayList<>();
 
-    public List<Progress> getProgress(String username) {
-        List<Progress> progressList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        // Read from the progress file
+        try (BufferedReader reader = new BufferedReader(new FileReader("resources/Progress"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts[0].equals(username)) {
-                    int painLevel = Integer.parseInt(parts[1]);
-                    String area = parts[2];
-                    int difficulty = Integer.parseInt(parts[3]);
-                    progressList.add(new Progress(painLevel, area, difficulty));
+                if (parts.length == 3) {
+                    progressList.add("Pain Level: " + parts[0] + ", Difficulty: " + parts[1] + ", Area: " + parts[2]);
                 }
             }
         } catch (IOException e) {
+            System.err.println("Error while reading progress: " + e.getMessage());
             e.printStackTrace();
         }
+
         return progressList;
     }
+    public String readFile() {
+        String fullString = "";
+        try (BufferedReader reader = new BufferedReader(new FileReader("resources/Progress"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                fullString += line + "\n";
+            }
+        } catch (IOException e) {
+            return "Error reading file: " + e.getMessage();
+        }
+        return fullString; // Return the complete file content
+    }
 }
+
