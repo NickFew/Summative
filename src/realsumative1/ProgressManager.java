@@ -5,8 +5,7 @@
 package realsumative1;
 
 /**
- *
- * @author nwf60
+ * Manages the progress entries of users, allowing them to track and save their progress in physiotherapy exercises.
  */
 
 import java.io.*;
@@ -15,11 +14,17 @@ import java.util.*;
 public class ProgressManager {
 
     private String filename;
-
+    /**
+     * Constructs a ProgressManager and initializes the list of progress entries.
+     */
     public ProgressManager() {
         filename = "resources/Progress";
     }
-
+    /**
+     * Saves a single progress entry to the progress file.
+     *
+     * @param progress The progress entry to be saved.
+     */
     public void saveProgress(Progress progress) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             writer.write("Pain level:" + progress.getPainLevel() + ", Difficulty" + progress.getDifficulty() + ", Area of pain:" + progress.getArea());
@@ -28,6 +33,9 @@ public class ProgressManager {
             e.printStackTrace();
         }
     }
+    /**
+     * Loads all progress entries from the progress file into the progressList.
+     */
     public List<String> seeSavedProgress() {
         List<String> progressList = new ArrayList<>();
 
@@ -47,6 +55,11 @@ public class ProgressManager {
 
         return progressList;
     }
+    /**
+     * Returns the list of all progress entries.
+     *
+     * @return The list of progress entries.
+     */
     public String readFile() {
         String fullString = "";
         try (BufferedReader reader = new BufferedReader(new FileReader("resources/Progress"))) {

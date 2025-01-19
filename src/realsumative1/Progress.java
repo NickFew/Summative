@@ -35,7 +35,11 @@ public class Progress {
     public String getArea() {
         return area;
     }
-
+    /**
+     * Returns a string representation of the progress entry.
+     *
+     * @return A string summarizing the progress details.
+     */
     public int getDifficulty() {
         return difficulty;
     }

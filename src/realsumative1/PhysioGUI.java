@@ -12,14 +12,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+/**
+ * Manages the GUI   App, including the login, exercise selection, and progress tracking panaels.
+ */
 public class PhysioGUI {
     private JFrame frame;
     private LoginManager loginManager;
     private ExerciseManager exerciseManager;
     private ProgressManager progressManager;
     private User currentUser;
-
+    /**
+     * Constructs the PhysioGUI and initializes necessary managers.
+     */
     public PhysioGUI() {
         loginManager = new LoginManager();
         exerciseManager = new ExerciseManager();
@@ -29,7 +33,9 @@ public class PhysioGUI {
         frame.setSize(600, 400);
         showLoginScreen();
     }
-
+    /**
+     * Displays the login screen where users can enter their username and password.
+     */
     public void showLoginScreen() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(4, 2));
@@ -78,6 +84,9 @@ public class PhysioGUI {
         frame.setContentPane(panel);
         frame.setVisible(true);
     }
+    /**
+     * Displays the exercise selection screen with a list of exercises and a search bar.
+     */
     public void showExerciseScreen() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -141,6 +150,9 @@ public class PhysioGUI {
         frame.setContentPane(panel);
         frame.setVisible(true);
     }
+    /**
+     * Displays the progress screen where users can input and submit their progress details.
+     */
     public void ShowProgressScreen() {
         // Create the panel for progress screen
         JPanel panel = new JPanel();
@@ -232,6 +244,9 @@ public class PhysioGUI {
         frame.setContentPane(panel);
         frame.setVisible(true);
     }
+    /**
+     * Displays the progress file for the user to view their saved progress.
+     */
     public void displayFile() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());

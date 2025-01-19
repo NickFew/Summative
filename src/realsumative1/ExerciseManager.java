@@ -7,10 +7,15 @@ package realsumative1;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Manages a list of exercises, including sorting and retrieval.
+ */
 public class ExerciseManager {
     private List<Exercise> exercises;
-
+    /**
+     * Constructs an ExerciseManager object and initializes the list of exercises.
+     * It adds various exercises to the list categorized by body parts and needs.
+     */
     public ExerciseManager() {
         exercises = new ArrayList<>();
         // Shoulder exercises
@@ -56,12 +61,22 @@ public class ExerciseManager {
 
         insertionSort(exercises); // Sort the exercises after adding them
     }
-
+    /**
+     * Retrieves the list of exercises based on the specified need.
+     * In a real app, this could be used to filter exercises.
+     *
+     * @param need The need or category of exercises.
+     * @return The list of exercises.
+     */
     public List<Exercise> getExercises(String need) {
         // In a real app, filter exercises based on the need
         return exercises;
     }
-
+    /**
+     * Sorts the list of exercises alphabetically by their name using insertion sort.
+     *
+     * @param list The list of exercises to be sorted.
+     */
     public void insertionSort(List<Exercise> list) {
         for (int i = 1; i < list.size(); i++) {
             Exercise key = list.get(i);
