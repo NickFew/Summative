@@ -140,6 +140,22 @@ public class PhysioGUI {
             }
         });
 
+        // Add functionality to the Search button
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchQuery = searchField.getText().toLowerCase(); // Convert to lowercase for case-insensitive search
+                DefaultListModel<Exercise> filteredListModel = new DefaultListModel<>();
+                for (Exercise exercise : exerciseManager.getExercises("need")) {
+                    if (exercise.getName().toLowerCase().contains(searchQuery)) {
+                        filteredListModel.addElement(exercise);
+                    }
+                }
+                // Update the JList with filtered results
+                exerciseList.setModel(filteredListModel);
+            }
+        });
+
         // Add components to the panel
         panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
